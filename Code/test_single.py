@@ -1,6 +1,15 @@
-# This is a pytorch version for the work of PanNet
-# YW Jin, X Wu, LJ Deng(UESTC);
-# 2020-09;
+# ---------------------------------------------------------------
+# Copyright (c) 2021, Shishi Xiao, Cheng Jin, Tian-Jing Zhang, 
+# Ran Ran, Liang-Jian Deng, All rights reserved.
+#
+# This work is licensed under GNU Affero General Public License 
+# v3.0 International To view a copy of this license, see the 
+# LICENSE file.
+#
+# This file is running on WorldView-3 dataset. For other dataset
+# (i.e., QuickBird and GaoFen-2), please change the corresponding
+# inputs.
+# ---------------------------------------------------------------
 
 import torch.nn.modules as nn
 import torch
@@ -79,5 +88,5 @@ def test(file_path):
 # ------------------- Main Function (Run first) -------------------
 ###################################################################
 if __name__ == '__main__':
-    file_path = "/Data/Machine Learning/Ran Ran/data/pan/pan_test/new_data6.mat"
+    file_path = "/path/to/test/data" # put test data here
     test(file_path)   # recall test function
