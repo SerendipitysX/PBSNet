@@ -24,10 +24,19 @@ Homepage:
 ## Dataset Preparation
 The datasets used in this paper is WorldView-3 (can be downloaded [here](https://www.maxar.com/product-samples/)), QuickBird (can be downloaded [here](https://earth.esa.int/eogateway/catalog/quickbird-full-archive)) and GaoFen-2 (can be downloaded [here](http://www.rscloudmart.com/dataProduct/sample)). Due to the copyright of dataset, we can not upload the datasets, you may download the data and simulate them according to the paper.
 
-## PBSNet Architecture
+## Get Started
+Training and testing codes are in '[codes/](./codes)'. All codes will be presented after the paper is completed published. Please refer to `codes/how-to-run.md` for detail description.
 
+## PBSNet Architecture
+![PBSNet](/figures/IGARSS_PBSN_schematic.png)
 
 ## Results
+
+### Visual Results
+![visual_results](/figures/visual_result.png)
+
+### Quantitative Results
+![visual_results](/figures/quantitative_result.png)
 
 ## Citation
 ```bibtex
@@ -44,3 +53,9 @@ The datasets used in this paper is WorldView-3 (can be downloaded [here](https:/
 
 ## Contact
 We are glad to hear from you. If you have any questions, please feel free to contact <mail> or open issues on this repository.
+ 
+## Acknowledgement
+For high-pass filter, our code is derived from [https://xueyangfu.github.io/projects/LPNet.html](https://xueyangfu.github.io/projects/LPNet.html).
+ 
+## License
+This project is open sourced under GNU Affero General Public License v3.0.

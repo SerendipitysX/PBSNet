@@ -1,6 +1,15 @@
-# This is a pytorch version for the work of PanNet
-# YW Jin, X Wu, LJ Deng(UESTC);
-# 2020-09;
+# ---------------------------------------------------------------
+# Copyright (c) 2021, Shishi Xiao, Cheng Jin, Tian-Jing Zhang, 
+# Ran Ran, Liang-Jian Deng, All rights reserved.
+#
+# This work is licensed under GNU Affero General Public License 
+# v3.0 International To view a copy of this license, see the 
+# LICENSE file.
+#
+# This file is running on WorldView-3 dataset. For other dataset
+# (i.e., QuickBird and GaoFen-2), please change the corresponding
+# inputs.
+# ---------------------------------------------------------------
 
 import torch
 import torch.nn as nn
@@ -55,14 +64,13 @@ class Resblock(nn.Module):
 
 
 # -----------------------------------------------------
-class OURNet(nn.Module):
+class PBSNet(nn.Module):
     def __init__(self):
-        super(OURNet, self).__init__()
+        super(PBSNet, self).__init__()
 
         channel = 32
         spectral_num = 8
 
-        # ConvTranspose2d: output = (input - 1)*stride + outpading - 2*padding + kernelsize #outpading=stride-1 #（16-1）*4-4+8=64
         self.deconv = nn.ConvTranspose2d(in_channels=8, out_channels=8, kernel_size=8, stride=4,
                                          padding=2, bias=True)
 
@@ -99,12 +107,6 @@ class OURNet(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.bn = nn.BatchNorm2d(32)
 
-        # backbone = []     # method 1: 4 resnet repeated blocks
-        # for i in range(4):
-        #     backbone.append(self.res)
-        # self.backbone = nn.Sequential(*backbone)
-
-
         self.backbone1 = nn.Sequential(  # method 2: 4 resnet repeated blocks
             self.res1,
             self.res2,
@@ -126,18 +128,15 @@ class OURNet(nn.Module):
         )
 
 
-        #init_weights(self.backbone1,self.backbone2,self.backbone3, self.deconv,\
-         #             self.conv3,self.conv6)  # state initialization, important!
-
     def forward(self, x, y, lms):  # x=  ms; y = pan
-        ##data dealing
+        # data dealing
         ms = x
-        ##lms
+        # lms
         lms_split = torch.split(lms, [2, 4, 1, 1], dim=1)  # lms1, lms2, lms3, lms4, lms5, lms6, lms7, ms8
         lms_batch1 = lms_split[0]
         lms_batch2 = torch.cat((lms_split[1], lms_split[3]), 1)
         
-        ##net1
+        # net1
         output_deconv = self.deconv(ms)
         input = torch.cat([output_deconv, y], 1)  # Bsx9x64x64
         rs = self.conv1(input)
@@ -146,7 +145,7 @@ class OURNet(nn.Module):
         rs = self.conv2(rs) # Bsx2x64x64 32/2
         output1 = rs + lms_batch1  # Bsx2x64x64 32/2
 
-        ##net2
+        # net2
         input2 = torch.cat((output1, output_deconv[:, [2, 3, 4, 5, 6, 7], :, :]), 1)  # Bsx(2+6)x64x64
         input2 = self.conv3(input2) # Bsx(8)x64x64  8/8
         input2 = torch.cat((input2, y), 1)  # Bsx(8+1)x64x64
@@ -156,7 +155,7 @@ class OURNet(nn.Module):
         rs = self.conv5(rs) # Bsx2x64x64 32/7
         output2 = rs + torch.cat((lms_batch1,lms_batch2),dim=1)  # Bsx7x64x64 32/7
 
-        ##net3
+        # net3
         input3 = torch.cat((output2, output_deconv[:, 6, :, :].unsqueeze(1)), 1)  # Bsx(7+1)x64x64
         input3 = self.conv6(input3)  # Bsx(8)x64x64  8/8
         input3 = torch.cat((input3, y), 1)  # Bsx(9)x64x64
