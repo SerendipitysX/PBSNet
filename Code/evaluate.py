@@ -1,3 +1,16 @@
+# ---------------------------------------------------------------
+# Copyright (c) 2021, Shishi Xiao, Cheng Jin, Tian-Jing Zhang, 
+# Ran Ran, Liang-Jian Deng, All rights reserved.
+#
+# This work is licensed under GNU Affero General Public License 
+# v3.0 International To view a copy of this license, see the 
+# LICENSE file.
+#
+# This file is running on WorldView-3 dataset. For other dataset
+# (i.e., QuickBird and GaoFen-2), please change the corresponding
+# inputs.
+# ---------------------------------------------------------------
+
 import math
 import torch
 import torch.nn.functional as F
@@ -6,7 +19,8 @@ def compute_index(img_base,img_out,ratio):
     h = img_out.shape[0]
     w = img_out.shape[1]
     chanel = img_out.shape[2]
-#计算SAM
+
+    # SAM calculation
     sum1 = torch.sum(img_base* img_out,2)
     sum2 = torch.sum(img_base* img_base,2)
     sum3 = torch.sum(img_out* img_out,2)
@@ -22,7 +36,7 @@ def compute_index(img_base,img_out,ratio):
         averangle=sumangle/num
     SAM=averangle*180/3.14159256
 
-#计算ERGAS
+    # ERGAS calculation
     summ=0
     for i in range(chanel):
         a1 = torch.mean((img_base[:, :, i] - img_out[:, :, i])**2)
@@ -39,13 +53,13 @@ def analysis_accu(img_base,img_out,ratio):
     w = img_out.shape[1]
     chanel = img_out.shape[2]
 
-#计算CC
+    # CC calculation
     C1=torch.sum(torch.sum(img_base*img_out,0),0)-h*w*(torch.mean(torch.mean(img_base,0),0)*torch.mean(torch.mean(img_out,0),0))
     C2=torch.sum(torch.sum(img_out**2,0),0)-h*w*(torch.mean(torch.mean(img_out,0),0)**2)
     C3 = torch.sum(torch.sum(img_base**2,0),0)-h*w*(torch.mean(torch.mean(img_base,0),0)**2)
     CC=C1/((C2*C3)**0.5)
 
-#计算SAM
+    # SAM calculation
     sum1 = torch.sum(img_base* img_out,2)
     sum2 = torch.sum(img_base* img_base,2)
     sum3 = torch.sum(img_out* img_out,2)
@@ -61,7 +75,7 @@ def analysis_accu(img_base,img_out,ratio):
         averangle=sumangle/num
     SAM=averangle*180/3.14159256
 
-#计算ERGAS
+    # ERGAS calculation
     summ=0
     for i in range(chanel):
         a1 = torch.mean((img_base[:, :, i] - img_out[:, :, i])**2)
@@ -70,14 +84,14 @@ def analysis_accu(img_base,img_out,ratio):
         summ=summ+a1/a2
     ERGAS=100*(1/ratio)*((summ/chanel)**0.5)
 
-#计算PSNR
+    # PSNR calculation
     mse = torch.mean((img_base- img_out) ** 2,0)
     mse = torch.mean(mse, 0)
     rmse = mse**0.5
     temp=torch.log(1 / rmse)/math.log(10)
     PSNR = 20 * temp
 
-# 计算SSIM
+    # SSIM calculation
     img_base=img_base.permute(2,0,1)
     img_out = img_out.permute(2, 0, 1)
     img_base = img_base.unsqueeze(0)
