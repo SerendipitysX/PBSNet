@@ -82,7 +82,7 @@ def test(file_path):
 
         print(sr.shape)
         save_name = os.path.join("results", "psfn.mat")  # fixed! save as .mat format that will used in Matlab!
-        sio.savemat(save_name, {'psfn': sr})  # fixed!
+        sio.savemat(save_name, {'psfn': sr})  
 
 ###################################################################
 # ------------------- Main Function (Run first) -------------------
