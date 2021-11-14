@@ -1,6 +1,15 @@
-# This is a pytorch version for the work of PanNet
-# YW Jin, X Wu, LJ Deng(UESTC);
-# 2020-09;
+# ---------------------------------------------------------------
+# Copyright (c) 2021, Shishi Xiao, Cheng Jin, Tian-Jing Zhang, 
+# Ran Ran, Liang-Jian Deng, All rights reserved.
+#
+# This work is licensed under GNU Affero General Public License 
+# v3.0 International To view a copy of this license, see the 
+# LICENSE file.
+#
+# This file is running on WorldView-3 dataset. For other dataset
+# (i.e., QuickBird and GaoFen-2), please change the corresponding
+# inputs.
+# ---------------------------------------------------------------
 
 import os
 import torch
@@ -11,7 +20,7 @@ from evaluate import compute_index
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from data import Dataset_Pro
-from model_separate_v1 import OURNet, summaries, Resblock
+from model_separate_v1 import PBSNet, summaries, Resblock
 from main_test_single import load_set, load_gt_compared
 import numpy as np
 import scipy.io as sio
@@ -27,7 +36,6 @@ SEED = 1
 torch.manual_seed(SEED)
 torch.cuda.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
-# cudnn.benchmark = True  ###自动寻找最优算法
 cudnn.deterministic = True
 cudnn.benchmark = False
 
@@ -41,7 +49,7 @@ model_path = "Weights/.pth"
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 # ============= 3) Load Model + Loss + Optimizer + Learn_rate_update ==========#
-model = OURNet().cuda()
+model = PBSNet().cuda()
 if os.path.isfile(model_path):
     model.load_state_dict(torch.load(model_path))  ## Load the pretrained Encoder
     print('OURNet is Successfully Loaded from %s' % (model_path))
@@ -372,16 +380,16 @@ def train(training_data_loader, validate_data_loader,test_lms,test_ms, test_pan,
 # ------------------- Main Function (Run first) -------------------
 ###################################################################
 if __name__ == "__main__":
-    train_set = Dataset_Pro('./training_data/train.mat')  # creat data for training
+    train_set = Dataset_Pro('/path/to/train/data')  # training data input
     training_data_loader = DataLoader(dataset=train_set, num_workers=0, batch_size=batch_size, shuffle=True,
                                       pin_memory=True, drop_last=True)  # put training data to DataLoader for batches
 
-    validate_set = Dataset_Pro('./training_data/validation.mat')  # creat data for validation
+    validate_set = Dataset_Pro('/path/to/validation/data')  # validation data input
     validate_data_loader = DataLoader(dataset=validate_set, num_workers=0, batch_size=batch_size, shuffle=True,
                                       pin_memory=True, drop_last=True)  # put training data to DataLoader for batches
 
     # ------------------- load_test ----------------------------------#
-    file_path = "test_data/new_data6.mat"
+    file_path = "/path/to/test/data" # test data input
     test_lms, test_ms, test_pan = load_set(file_path)
     test_lms = test_lms.cuda().unsqueeze(dim=0).float()
     test_ms = test_ms.cuda().unsqueeze(dim=0).float()  # convert to tensor type: 1xCxHxW (unsqueeze(dim=0))
