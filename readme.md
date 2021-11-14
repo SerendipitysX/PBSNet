@@ -32,10 +32,10 @@ The datasets used in this paper is WorldView-3 (can be downloaded [here](https:/
 ## Results
 
 ### Visual Results
-![visual_results](/figures/visual_results.png)
+![visual_results](/figures/visual_result.pngg)
 
 ### Quantitative Results
-![visual_results](/figures/visual_results.png)
+![visual_results](/figures/quantitative_result.png)
 
 ## Citation
 ```bibtex
