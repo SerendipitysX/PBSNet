@@ -53,3 +53,9 @@ Training and testing codes are in '[codes/](./codes)'. All codes will be present
 
 ## Contact
 We are glad to hear from you. If you have any questions, please feel free to contact <mail> or open issues on this repository.
+ 
+## Acknowledgement
+For high-pass filter, our code is derived from [https://xueyangfu.github.io/projects/LPNet.html](https://xueyangfu.github.io/projects/LPNet.html).
+ 
+## License
+This project is open sourced under GNU Affero General Public License v3.0.
